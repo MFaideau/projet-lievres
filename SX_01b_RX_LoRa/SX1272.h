@@ -1,25 +1,31 @@
-/*
- *  Library for LoRa 868 / 915MHz SX1272 LoRa module
- *  
- *  Copyright (C) Libelium Comunicaciones Distribuidas S.L. 
- *  http://www.libelium.com 
- *  
- *  This program is free software: you can redistribute it and/or modify 
- *  it under the terms of the GNU General Public License as published by 
- *  the Free Software Foundation, either version 3 of the License, or 
- *  (at your option) any later version. 
- *  
- *  This program is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- *  GNU General Public License for more details.
- *  
- *  You should have received a copy of the GNU General Public License 
- *  along with this program.  If not, see http://www.gnu.org/licenses/. 
- *  
- *  Version:           1.1
- *  Design:            David Gascón 
- *  Implementation:    Covadonga Albiñana & Victor Boria
+/*! \file SX1272.h
+    \brief Library for managing Semtech modules with Arduino
+
+    Copyright (C) 2014 Libelium Comunicaciones Distribuidas S.L.
+    http://www.libelium.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Version:		1.0
+    Design:			David Gascón
+    Implementation:	Covadonga Albiñana
+
+ */
+
+ /*! \def SX1272_h
+    \brief The library flag
+
  */
 
 #ifndef SX1272_h
@@ -42,24 +48,10 @@
  * Definitions & Declarations
  *****************************************************************************/
 
-// added by C. Pham
-// do not remove!
-#define W_REQUESTED_ACK
-//#define W_NET_KEY
-//#define W_INITIALIZATION
-#define SX1272_RST  3
-
-#if defined ARDUINO_AVR_PRO || defined ARDUINO_AVR_NANO || defined ARDUINO_AVR_MICRO || defined ARDUINO_AVR_MINI || defined __MK20DX256__
-#define SX1272_SS 10
-#else
-#define SX1272_SS 2
-#endif
-
-#define SX1272Chip  0
-#define SX1276Chip  1
-// end
-
 #define SX1272_debug_mode 0
+
+//#define SX1272_SS 6 //For use with AlbaTracker 1 and 1.1
+#define SX1272_SS 9 //For use with Lora Com Module
 
 //! MACROS //
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)  // read a bit
@@ -129,9 +121,6 @@
 #define        REG_PREAMBLE_MSB_FSK 			0x25
 #define        REG_FIFO_RX_BYTE_ADDR 			0x25
 #define        REG_PREAMBLE_LSB_FSK 			0x26
-// added by C. Pham
-#define        REG_MODEM_CONFIG3	  			0x26
-// end
 #define        REG_SYNC_CONFIG	  				0x27
 #define        REG_SYNC_VALUE1	 				0x28
 #define        REG_SYNC_VALUE2	  				0x29
@@ -152,9 +141,6 @@
 #define        REG_SEQ_CONFIG2	  				0x37
 #define        REG_DETECTION_THRESHOLD          0x37
 #define        REG_TIMER_RESOL	  				0x38
-// added by C. Pham
-#define        REG_SYNC_WORD                    0x39
-//end
 #define        REG_TIMER1_COEF	  				0x39
 #define        REG_TIMER2_COEF	  				0x3A
 #define        REG_IMAGE_CAL	  				0x3B
@@ -177,66 +163,15 @@
 #define        REG_FORMER_TEMP	  				0x6C
 #define        REG_BIT_RATE_FRAC	  			0x70
 
-// added by C. Pham
-// copied from LoRaMAC-Node
-/*!
- * RegImageCal
- */
-#define RF_IMAGECAL_AUTOIMAGECAL_MASK               0x7F
-#define RF_IMAGECAL_AUTOIMAGECAL_ON                 0x80
-#define RF_IMAGECAL_AUTOIMAGECAL_OFF                0x00  // Default
-
-#define RF_IMAGECAL_IMAGECAL_MASK                   0xBF
-#define RF_IMAGECAL_IMAGECAL_START                  0x40
-
-#define RF_IMAGECAL_IMAGECAL_RUNNING                0x20
-#define RF_IMAGECAL_IMAGECAL_DONE                   0x00  // Default
-
-#define RF_IMAGECAL_TEMPCHANGE_HIGHER               0x08
-#define RF_IMAGECAL_TEMPCHANGE_LOWER                0x00
-
-#define RF_IMAGECAL_TEMPTHRESHOLD_MASK              0xF9
-#define RF_IMAGECAL_TEMPTHRESHOLD_05                0x00
-#define RF_IMAGECAL_TEMPTHRESHOLD_10                0x02  // Default
-#define RF_IMAGECAL_TEMPTHRESHOLD_15                0x04
-#define RF_IMAGECAL_TEMPTHRESHOLD_20                0x06
-
-#define RF_IMAGECAL_TEMPMONITOR_MASK                0xFE
-#define RF_IMAGECAL_TEMPMONITOR_ON                  0x00 // Default
-#define RF_IMAGECAL_TEMPMONITOR_OFF                 0x01
-
-// added by C. Pham
-// The crystal oscillator frequency of the module
-#define RH_LORA_FXOSC 32000000.0
- 
-// The Frequency Synthesizer step = RH_LORA_FXOSC / 2^^19
-#define RH_LORA_FCONVERT  (524288 / RH_LORA_FXOSC)
-
-// Frf = frf(Hz)*2^19/RH_LORA_FXOSC
-
-/////
-
 //FREQUENCY CHANNELS:
-// added by C. Pham for Senegal
-const uint32_t CH_04_868 = 0xD7CCCC; // channel 04, central freq = 863.20MHz
-const uint32_t CH_05_868 = 0xD7E000; // channel 05, central freq = 863.50MHz
-const uint32_t CH_06_868 = 0xD7F333; // channel 06, central freq = 863.80MHz
-const uint32_t CH_07_868 = 0xD80666; // channel 07, central freq = 864.10MHz
-const uint32_t CH_08_868 = 0xD81999; // channel 08, central freq = 864.40MHz
-const uint32_t CH_09_868 = 0xD82CCC; // channel 09, central freq = 864.70MHz
-//
-const uint32_t CH_10_868 = 0xD84CCC; // channel 10, central freq = 865.20MHz, = 865200000*RH_LORA_FCONVERT
+const uint32_t CH_10_868 = 0xD84CCC; // channel 10, central freq = 865.20MHz
 const uint32_t CH_11_868 = 0xD86000; // channel 11, central freq = 865.50MHz
 const uint32_t CH_12_868 = 0xD87333; // channel 12, central freq = 865.80MHz
 const uint32_t CH_13_868 = 0xD88666; // channel 13, central freq = 866.10MHz
 const uint32_t CH_14_868 = 0xD89999; // channel 14, central freq = 866.40MHz
 const uint32_t CH_15_868 = 0xD8ACCC; // channel 15, central freq = 866.70MHz
 const uint32_t CH_16_868 = 0xD8C000; // channel 16, central freq = 867.00MHz
-const uint32_t CH_17_868 = 0xD90000; // channel 17, central freq = 868.00MHz
-
-// added by C. Pham
-const uint32_t CH_18_868 = 0xD90666; // 868.1MHz for LoRaWAN test
-// end
+const uint32_t CH_17_868 = 0xD90000; // channel 16, central freq = 868.00MHz
 const uint32_t CH_00_900 = 0xE1C51E; // channel 00, central freq = 903.08MHz
 const uint32_t CH_01_900 = 0xE24F5C; // channel 01, central freq = 905.24MHz
 const uint32_t CH_02_900 = 0xE2D999; // channel 02, central freq = 907.40MHz
@@ -251,32 +186,10 @@ const uint32_t CH_10_900 = 0xE72B85; // channel 10, central freq = 924.68MHz
 const uint32_t CH_11_900 = 0xE7B5C2; // channel 11, central freq = 926.84MHz
 const uint32_t CH_12_900 = 0xE4C000; // default channel 915MHz, the module is configured with it
 
-// added by C. Pham
-const uint32_t CH_00_433 = 0x6C5333; // 433.3MHz
-const uint32_t CH_01_433 = 0x6C6666; // 433.6MHz
-const uint32_t CH_02_433 = 0x6C7999; // 433.9MHz
-const uint32_t CH_03_433 = 0x6C9333; // 434.3MHz
-// end
-
 //LORA BANDWIDTH:
-// modified by C. Pham
-const uint8_t SX1272_BW_125 = 0x00;
-const uint8_t SX1272_BW_250 = 0x01;
-const uint8_t SX1272_BW_500 = 0x02;
-
-// use the following constants with setBW()
-const uint8_t BW_7_8 = 0x00;
-const uint8_t BW_10_4 = 0x01;
-const uint8_t BW_15_6 = 0x02;
-const uint8_t BW_20_8 = 0x03;
-const uint8_t BW_31_25 = 0x04;
-const uint8_t BW_41_7 = 0x05;
-const uint8_t BW_62_5 = 0x06;
-const uint8_t BW_125 = 0x07;
-const uint8_t BW_250 = 0x08;
-const uint8_t BW_500 = 0x09;
-// end
-
+const uint8_t BW_125 = 0x00;
+const uint8_t BW_250 = 0x01;
+const uint8_t BW_500 = 0x02;
 const double SignalBwLog[] =
 {
     5.0969100130080564143587833158265,
@@ -304,14 +217,6 @@ const uint8_t LORA_SLEEP_MODE = 0x80;
 const uint8_t LORA_STANDBY_MODE = 0x81;
 const uint8_t LORA_TX_MODE = 0x83;
 const uint8_t LORA_RX_MODE = 0x85;
-
-// added by C. Pham
-const uint8_t LORA_CAD_MODE = 0x87;
-#define LNA_MAX_GAIN                0x23
-#define LNA_OFF_GAIN                0x00
-#define LNA_LOW_GAIN		    0x20
-// end
-
 const uint8_t LORA_STANDBY_FSK_REGS_MODE = 0xC1;
 
 //FSK MODES:
@@ -333,64 +238,27 @@ const uint8_t MAX_LENGTH = 255;
 const uint8_t MAX_PAYLOAD = 251;
 const uint8_t MAX_LENGTH_FSK = 64;
 const uint8_t MAX_PAYLOAD_FSK = 60;
-//modified by C. Pham, 7 instead of 5 because we added a type field which should be PKT_TYPE_ACK and the SNR
-const uint8_t ACK_LENGTH = 7;
-// added by C. Pham
-#ifdef W_NET_KEY
-const uint8_t NET_KEY_LENGTH=2;
-const uint8_t OFFSET_PAYLOADLENGTH = 4+NET_KEY_LENGTH;
-const uint8_t net_key_0 = 0x12;
-const uint8_t net_key_1 = 0x34;
-#else
-// modified by C. Pham to remove the retry field and the length field
-// which will be replaced by packet type field
-const uint8_t OFFSET_PAYLOADLENGTH = 4;
-#endif
+const uint8_t ACK_LENGTH = 5;
+const uint8_t OFFSET_PAYLOADLENGTH = 5;
 const uint8_t OFFSET_RSSI = 137;
 const uint8_t NOISE_FIGURE = 6.0;
 const uint8_t NOISE_ABSOLUTE_ZERO = 174.0;
-const uint16_t MAX_TIMEOUT = 10000;		//10000 msec = 10.0 sec
+const uint16_t MAX_TIMEOUT = 8000;		//8000 msec = 8.0 sec
 const uint16_t MAX_WAIT = 12000;		//12000 msec = 12.0 sec
 const uint8_t MAX_RETRIES = 5;
 const uint8_t CORRECT_PACKET = 0;
 const uint8_t INCORRECT_PACKET = 1;
 
-// added by C. Pham
-// Packet type definition
-
-#define PKT_TYPE_MASK   0xF0
-#define PKT_FLAG_MASK   0x0F
-
-#define PKT_TYPE_DATA   0x10
-#define PKT_TYPE_ACK    0x20
-
-#define PKT_FLAG_ACK_REQ            0x08
-#define PKT_FLAG_DATA_ENCRYPTED     0x04
-#define PKT_FLAG_DATA_WAPPKEY       0x02
-#define PKT_FLAG_DATA_ISBINARY      0x01
-
-#define SX1272_ERROR_ACK        3
-#define SX1272_ERROR_TOA        4
 
 //! Structure :
 /*!
  */
 struct pack
 {
-	// added by C. Pham
-#ifdef W_NET_KEY	
-	uint8_t netkey[NET_KEY_LENGTH];
-#endif	
 	//! Structure Variable : Packet destination
 	/*!
  	*/
 	uint8_t dst;
-
-    // added by C. Pham
-    //! Structure Variable : Packet type
-    /*!
-    */
-    uint8_t type;
 
 	//! Structure Variable : Packet source
 	/*!
@@ -402,8 +270,6 @@ struct pack
  	*/
 	uint8_t packnum;
 
-    // modified by C. Pham
-    // will not be used in the transmitted packet
 	//! Structure Variable : Packet length
 	/*!
  	*/
@@ -414,8 +280,6 @@ struct pack
  	*/
 	uint8_t data[MAX_PAYLOAD];
 
-    // modified by C. Pham
-    // will not be used in the transmitted packet
 	//! Structure Variable : Retry number
 	/*!
  	*/
@@ -447,9 +311,9 @@ public:
 	//! It puts the module ON
   	/*!
 	\param void
-	\return uint8_t setLORA state
+	\return void
 	 */
-	uint8_t ON();
+	void ON();
 
 	//! It puts the module OFF
   	/*!
@@ -658,13 +522,22 @@ public:
 	 */
 	uint8_t getPower();
 
-	//! It sets the output power of the signal.
+	//! It sets the RF output pin.
+  	/*!
+	It stores in global '_rfOutPin' variable the RF output pin
+	\param char p : 0 or 1 if the signal output should be from
+	the RFO or PA_BOOST port.
+	\return '0' on success, '1' otherwise
+	 */
+	int8_t setRfOutPin(char p);
+	
+//! It sets the output power of the signal.
   	/*!
 	It stores in global '_power' variable the output power of the signal
 	\param char p : 'M', 'H' or 'L' if you want Maximum, High or Low
 	output power signal.
 	\return '0' on success, '1' otherwise
-	 */
+	 */	
 	int8_t setPower(char p);
 
 	//! It sets the output power of the signal.
@@ -1158,49 +1031,7 @@ public:
 	*/
 	uint8_t getTemp();
 
-    // added by C. Pham
-    void setPacketType(uint8_t type);
-    void RxChainCalibration();
-    uint8_t doCAD(uint8_t counter);
-    uint16_t getToA(uint8_t pl);
-    void CarrierSense();
-    int8_t setSyncWord(uint8_t sw);
-    int8_t getSyncWord();
-    int8_t setSleepMode();
-    int8_t setPowerDBM(uint8_t dbm);
-    long limitToA();
-    long getRemainingToA();
-    long removeToA(uint16_t toa);
 
-    // SX1272 or SX1276?
-    uint8_t _board;
-    uint8_t _syncWord;
-    uint8_t _defaultSyncWord;
-    unsigned long _starttime;
-    unsigned long _stoptime;
-    unsigned long _startDoCad;
-    unsigned long _endDoCad;
-    uint8_t _loraMode;
-    uint8_t _send_cad_number;
-    bool _extendedIFS;
-    bool _RSSIonSend;
-    bool _enableCarrierSense;
-    bool _rawFormat;
-    int8_t _rcv_snr_in_ack;
-    bool _needPABOOST;
-
-#ifdef W_REQUESTED_ACK
-	uint8_t _requestACK;
-	uint8_t _requestACK_indicator;
-#endif
-
-#ifdef W_NET_KEY
-	uint8_t _my_netkey[NET_KEY_LENGTH];
-        uint8_t _the_net_key_0;
-        uint8_t _the_net_key_1;
-#endif
-	// end
-	
 	/// Variables /////////////////////////////////////////////////////////////
 
 	//! Variable : bandwidth configured in LoRa mode.
@@ -1255,11 +1086,23 @@ public:
   	/*!
    	*/
 	uint32_t _channel;
-
-	//! Variable : output power.
+	
+	//! Variable : RF output pin.
 	//!
   	/*!
    	*/
+	uint8_t _rfOutPin;
+
+	//! Variable : output power (20dBm).
+	//!
+  	/*!
+   	*/
+  uint8_t _PaDac;
+
+  //! Variable : output power.
+  //!
+    /*!
+    */
 	uint8_t _power;
 
 	//! Variable : SNR from the last packet received in LoRa mode.
@@ -1388,15 +1231,6 @@ public:
    	*/
 	uint16_t _sendTime;
 
-    // added by C. Pham for ToA management
-    //
-private:
-
-    bool _limitToA;
-    long _remainingToA;
-    unsigned long _startToAcycle;
-    unsigned long _endToAcycle;
-    uint16_t _currentToA;
 };
 
 extern SX1272	sx1272;

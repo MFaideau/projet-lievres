@@ -1,16 +1,17 @@
-#define LoraComModule
 #include "SX1272.h"
 #include <SPI.h>
+
 int ADDRESS = 1;
 int ADDRESS_RECEIVER = 8;
 byte pinRX = 6;
 byte pinTX = 5;
 byte pinRESET = 7;
 char* receptionData;
-uint8_t len; uint8_t snr; int8_t rssi;
-
-void setup()
-{ 
+uint8_t len; 
+uint8_t snr; 
+int8_t rssi;
+void setupLoRa()
+{
   pinMode(pinRX, OUTPUT);
   pinMode(pinTX, OUTPUT);
   pinMode(pinRESET, OUTPUT);
@@ -24,11 +25,6 @@ void setup()
   sx1272.setPower('P');
   sx1272.setRfOutPin(1);
   sx1272.setNodeAddress(ADDRESS);
-}
-
-void loop()
-{
-  sendMessage("Macense");
 }
 
 void sendMessage(byte message[]) {

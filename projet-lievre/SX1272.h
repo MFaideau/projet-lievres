@@ -307,6 +307,9 @@ class SX1272
     */
     SX1272();
 
+    void SX1272::goSleep();
+
+    void SX1272::wakeUp();
     //! It puts the module ON
     /*!
       \param void

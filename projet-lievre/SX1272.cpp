@@ -347,6 +347,17 @@ uint8_t SX1272::getMode()
   Parameters:
    mode: mode number to set the required BW, SF and CR of LoRa modem.
 */
+
+void SX1272::goSleep() {
+  writeRegister(REG_OP_MODE, LORA_SLEEP_MODE);
+  delay(200);
+}
+
+void SX1272::wakeUp() {
+  writeRegister(REG_OP_MODE, LORA_STANDBY_MODE);
+  delay(200);
+}
+
 int8_t SX1272::setMode(uint8_t mode)
 {
   int8_t state = 2;
@@ -3373,10 +3384,10 @@ void SX1272::receivePacket(uint16_t wait, char** data, uint8_t* len, uint8_t* sn
   boolean p_received = false;
   this->receive();
   previous = millis();
-  *data=0;
-  *len=0;
-  *snr=0;
-  *rssi=0;
+  *data = 0;
+  *len = 0;
+  *snr = 0;
+  *rssi = 0;
   if ( _modem == LORA )
   { // LoRa mode
     value = readRegister(REG_IRQ_FLAGS);
@@ -3464,9 +3475,9 @@ void SX1272::receivePacket(uint16_t wait, char** data, uint8_t* len, uint8_t* sn
       {
         packet_received.data[i] = readRegister(REG_FIFO); // Storing payload
       }
-      
-      *snr = 54;
-      *rssi = 4;
+
+      *snr = getSNR();
+      *rssi = getRSSI();
       *len = _payloadlength;
       // Print the packet if debug_mode
       state = 0;
@@ -4243,10 +4254,10 @@ uint8_t SX1272::setPacket(uint8_t dest, uint8_t *payload)
   }
   else
   {
-//    if ( _retries == 1 )
-//    {
-//      packet_sent.length++;
-//    }
+    //    if ( _retries == 1 )
+    //    {
+    //      packet_sent.length++;
+    //    }
     state = setPacketLength();
     packet_sent.retry = _retries;
 #if (SX1272_debug_mode > 0)

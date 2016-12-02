@@ -10,7 +10,7 @@ char* receptionData;
 uint8_t len; uint8_t snr; int8_t rssi;
 
 void setup()
-{
+{ 
   pinMode(pinRX, OUTPUT);
   pinMode(pinTX, OUTPUT);
   pinMode(pinRESET, OUTPUT);

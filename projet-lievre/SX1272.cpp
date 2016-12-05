@@ -192,7 +192,12 @@ uint8_t SX1272::setLORA()
   Serial.println();
   Serial.println(F("Starting 'setLORA'"));
 #endif
-
+  byte readVersion;
+  while ((readVersion = readRegister(0x42)) != 0x22) {
+    Serial.print("Failed to read version: ");
+    Serial.println(readVersion);
+    delay(1000);
+  }
   writeRegister(REG_OP_MODE, FSK_SLEEP_MODE);    // Sleep mode (mandatory to set LoRa mode)
   writeRegister(REG_OP_MODE, LORA_SLEEP_MODE);    // LoRa sleep mode
   writeRegister(REG_OP_MODE, LORA_STANDBY_MODE);	// LoRa standby mode
@@ -4044,19 +4049,16 @@ uint8_t SX1272::setTimeout()
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::setPayload(char *payload)
+uint8_t SX1272::setPayload(char *payload, uint16_t length16)
 {
   uint8_t state = 2;
   uint8_t state_f = 2;
-  uint16_t length16;
 
 #if (SX1272_debug_mode > 1)
   Serial.println();
   Serial.println(F("Starting 'setPayload'"));
 #endif
-
   state = 1;
-  length16 = (uint16_t)strlen(payload);
   state = truncPayload(length16);
   if ( state == 0 )
   {
@@ -4126,7 +4128,7 @@ uint8_t SX1272::setPayload(uint8_t *payload)
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::setPacket(uint8_t dest, char *payload)
+uint8_t SX1272::setPacket(uint8_t dest, char *payload, uint16_t len)
 {
   int8_t state = 2;
 
@@ -4154,7 +4156,7 @@ uint8_t SX1272::setPacket(uint8_t dest, char *payload)
     packet_sent.retry = _retries;
     if ( state == 0 )
     {
-      state = setPayload(payload);
+      state = setPayload(payload, len);
     }
   }
   else
@@ -4271,10 +4273,10 @@ uint8_t SX1272::setPacket(uint8_t dest, uint8_t *payload)
   {
     state = 1;
     // Writing packet to send in FIFO
-    writeRegister(REG_FIFO, packet_sent.dst); 		// Writing the destination in FIFO
-    writeRegister(REG_FIFO, packet_sent.src);		// Writing the source in FIFO
-    writeRegister(REG_FIFO, packet_sent.packnum);	// Writing the packet number in FIFO
-    writeRegister(REG_FIFO, packet_sent.length); 	// Writing the packet length in FIFO
+    //writeRegister(REG_FIFO, packet_sent.dst); 		// Writing the destination in FIFO
+    //writeRegister(REG_FIFO, packet_sent.src);		// Writing the source in FIFO
+    //writeRegister(REG_FIFO, packet_sent.packnum);	// Writing the packet number in FIFO
+    //writeRegister(REG_FIFO, packet_sent.length); 	// Writing the packet length in FIFO
     for (unsigned int i = 0; i < _payloadlength; i++)
     {
       writeRegister(REG_FIFO, packet_sent.data[i]);  // Writing the payload in FIFO
@@ -4451,7 +4453,7 @@ uint8_t SX1272::sendPacketMAXTimeout(uint8_t dest,  uint8_t *payload, uint16_t l
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload)
+uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload, uint16_t len)
 {
   uint8_t state = 2;
 
@@ -4460,7 +4462,7 @@ uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload)
   Serial.println(F("Starting 'sendPacketTimeout'"));
 #endif
 
-  state = setPacket(dest, payload);	// Setting a packet with 'dest' destination
+  state = setPacket(dest, payload, len);	// Setting a packet with 'dest' destination
   if (state == 0)								// and writing it in FIFO.
   {
     state = sendWithTimeout();	// Sending the packet
@@ -4508,7 +4510,7 @@ uint8_t SX1272::sendPacketTimeout(uint8_t dest, uint8_t *payload, uint16_t lengt
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload, uint16_t wait)
+uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload, uint16_t wait, uint16_t len)
 {
   uint8_t state = 2;
 
@@ -4517,7 +4519,7 @@ uint8_t SX1272::sendPacketTimeout(uint8_t dest, char *payload, uint16_t wait)
   Serial.println(F("Starting 'sendPacketTimeout'"));
 #endif
 
-  state = setPacket(dest, payload);	// Setting a packet with 'dest' destination
+  state = setPacket(dest, payload, len);	// Setting a packet with 'dest' destination
   if (state == 0)								// and writing it in FIFO.
   {
     state = sendWithTimeout(wait);	// Sending the packet
@@ -4590,7 +4592,7 @@ uint8_t SX1272::sendPacketMAXTimeoutACK(uint8_t dest, uint8_t *payload, uint16_t
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload)
+uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t len)
 {
   uint8_t state = 2;
   uint8_t state_f = 2;
@@ -4600,7 +4602,7 @@ uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload)
   Serial.println(F("Starting 'sendPacketTimeoutACK'"));
 #endif
 
-  state = sendPacketTimeout(dest, payload);	// Sending packet to 'dest' destination
+  state = sendPacketTimeout(dest, payload, len);	// Sending packet to 'dest' destination
   if ( state == 0 )
   {
     state = receive();	// Setting Rx mode to wait an ACK
@@ -4684,7 +4686,7 @@ uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, uint8_t *payload, uint16_t le
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t wait)
+uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t len, uint16_t wait)
 {
   uint8_t state = 2;
   uint8_t state_f = 2;
@@ -4694,7 +4696,7 @@ uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t wait)
   Serial.println(F("Starting 'sendPacketTimeoutACK'"));
 #endif
 
-  state = sendPacketTimeout(dest, payload, wait);	// Sending packet to 'dest' destination
+  state = sendPacketTimeout(dest, payload, len, wait);	// Sending packet to 'dest' destination
   if ( state == 0 )
   {
     state = receive();	// Setting Rx mode to wait an ACK
@@ -4965,7 +4967,7 @@ uint8_t SX1272::sendPacketMAXTimeoutACKRetries(uint8_t dest, uint8_t *payload, u
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload)
+uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t len)
 {
   uint8_t state = 2;
 
@@ -4978,7 +4980,7 @@ uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload)
   state = 1;
   while ( (state != 0) && (_retries <= _maxRetries) )
   {
-    state = sendPacketTimeoutACK(dest, payload);
+    state = sendPacketTimeoutACK(dest, payload, len);
     _retries++;
   }
   _retries = 0;
@@ -5022,7 +5024,7 @@ uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, uint8_t *payload, uint
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t wait)
+uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t wait, uint16_t len)
 {
   uint8_t state = 2;
 
@@ -5035,7 +5037,7 @@ uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_
   state = 1;
   while ((state != 0) && (_retries <= _maxRetries))
   {
-    state = sendPacketTimeoutACK(dest, payload, wait);
+    state = sendPacketTimeoutACK(dest, payload, wait, len);
     _retries++;
   }
   _retries = 0;
@@ -5050,7 +5052,7 @@ uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_
    state = 1  --> There has been an error while executing the command
    state = 0  --> The command has been executed with no errors
 */
-uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, uint8_t *payload, uint16_t length16, uint16_t wait)
+uint8_t SX1272::sendPacketTimeoutACKRetries(uint8_t dest, uint8_t *payload, uint16_t wait,uint16_t length16)
 {
   uint8_t state = 2;
 

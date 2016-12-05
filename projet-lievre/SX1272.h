@@ -770,7 +770,7 @@ class SX1272
       \param char *payload : packet payload.
       \return '0' on success, '1' otherwise
     */
-    uint8_t setPacket(uint8_t dest, char *payload);
+    uint8_t setPacket(uint8_t dest, char *payload, uint16_t len);
 
     //! It writes a packet in FIFO in order to send it.
     /*!
@@ -850,7 +850,7 @@ class SX1272
       \param char *payload : packet payload.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeout(uint8_t dest, char *payload);
+    uint8_t sendPacketTimeout(uint8_t dest, char *payload, uint16_t len);
 
     //! It sends the packet wich payload is a parameter before ending MAX_TIMEOUT.
     /*!
@@ -868,7 +868,7 @@ class SX1272
       \param uint16_t wait : time to wait.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeout(uint8_t dest, char *payload, uint16_t wait);
+    uint8_t sendPacketTimeout(uint8_t dest, char *payload, uint16_t wait, uint16_t len);
 
     //! It sends the packet wich payload is a parameter before ending 'wait' time.
     /*!
@@ -903,7 +903,7 @@ class SX1272
       \param char *payload : packet payload.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACK(uint8_t dest, char *payload);
+    uint8_t SX1272::sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t wait);
 
     //! It sends the packet wich payload is a parameter before a timeout, and replies with ACK.
     /*!
@@ -921,7 +921,7 @@ class SX1272
       \param uint16_t wait : time to wait to send the packet.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t wait);
+    uint8_t sendPacketTimeoutACK(uint8_t dest, char *payload, uint16_t len, uint16_t wait);
 
     //! It sends the packet wich payload is a parameter before 'wait' time, and replies with ACK.
     /*!
@@ -931,7 +931,7 @@ class SX1272
       \param uint16_t wait : time to wait to send the packet.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACK(uint8_t dest, uint8_t *payload, uint16_t length, uint16_t wait);
+    uint8_t sendPacketTimeoutACK(uint8_t dest, uint8_t *payload, uint16_t length16, uint16_t wait);
 
     //! It sets the destination of a packet.
     /*!
@@ -952,7 +952,7 @@ class SX1272
       \param char *payload : packet payload.
       \return '0' on success, '1' otherwise
     */
-    uint8_t setPayload(char *payload);
+    uint8_t setPayload(char *payload, uint16_t length16);
 
     //! It sets the payload of the packet that is going to be sent.
     /*!
@@ -999,7 +999,7 @@ class SX1272
       \param char *payload : packet payload.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, char *payload);
+    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t len);
 
     //! It sends a packet, waits to receive an ACK and updates the _retries value.
     /*!
@@ -1017,7 +1017,7 @@ class SX1272
       \param uint16_t wait : time to wait while trying to send the packet.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t wait);
+    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, char *payload, uint16_t wait, uint16_t len);
 
     //! It sends a packet, waits to receive an ACK and updates the _retries value, before ending 'wait' time.
     /*!
@@ -1027,7 +1027,7 @@ class SX1272
       \param uint16_t wait : time to wait while trying to send the packet.
       \return '0' on success, '1' otherwise
     */
-    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, uint8_t *payload, uint16_t length, uint16_t wait);
+    uint8_t sendPacketTimeoutACKRetries(uint8_t dest, uint8_t *payload, uint16_t wait, uint16_t len);
 
     //! It gets the internal temperature of the module.
     /*!

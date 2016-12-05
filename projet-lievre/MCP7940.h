@@ -29,21 +29,21 @@
 #define ALM1MTH	0x16
 
 class MCP7940 {
-protected:
-  uint8_t _deviceAddr;
-  
-public:
-	MCP7940(uint8_t);
-	uint8_t byteRead(uint8_t);
-	void byteWrite(uint8_t, uint8_t);
-	unsigned int bcd2int(int vale);
-	unsigned int int2bcd(int vale);
-	void set_alm0(uint8_t match, uint8_t sec = 0, uint8_t minu = 0, uint8_t hr = 0, uint8_t jSem = 0, uint8_t d = 0, uint8_t mth = 0);
-// match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
-	void set_alm1(uint8_t match, uint8_t sec = 0, uint8_t minu = 0, uint8_t hr = 0, uint8_t jSem = 0, uint8_t d = 0, uint8_t mth = 0);
-// match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
+  protected:
+    uint8_t _deviceAddr;
+
+  public:
+    MCP7940(uint8_t);
+    uint8_t byteRead(uint8_t);
+    void byteWrite(uint8_t, uint8_t);
+    unsigned int bcd2int(int vale);
+    unsigned int int2bcd(int vale);
+    void set_alm0(uint8_t match, uint8_t sec = 0, uint8_t minu = 0, uint8_t hr = 0, uint8_t jSem = 0, uint8_t d = 0, uint8_t mth = 0);
+    // match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
+    void set_alm1(uint8_t match, uint8_t sec = 0, uint8_t minu = 0, uint8_t hr = 0, uint8_t jSem = 0, uint8_t d = 0, uint8_t mth = 0);
+    // match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
 };
-                                   
+
 
 
 #endif

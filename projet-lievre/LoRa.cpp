@@ -7,11 +7,14 @@ byte pinRX = 6;
 byte pinTX = 5;
 byte pinRESET = 7;
 char* receptionData;
-uint8_t len; 
-uint8_t snr; 
+uint8_t len;
+uint8_t snr;
 int8_t rssi;
-void setupLoRa()
+void setupLoRa(int rx, int tx, int reset)
 {
+  pinRX = rx;
+  pinTX = tx;
+  pinRESET = reset;
   pinMode(pinRX, OUTPUT);
   pinMode(pinTX, OUTPUT);
   pinMode(pinRESET, OUTPUT);
@@ -26,12 +29,11 @@ void setupLoRa()
   sx1272.setNodeAddress(ADDRESS);
 }
 
-void sendMessage(byte message[]) {
-  sx1272.sendPacketTimeout(ADDRESS_RECEIVER, message);
+void sendMessage(byte message[], uint16_t len) {
+  sx1272.sendPacketTimeout(ADDRESS_RECEIVER, message, len);
 }
 
 bool messageAvailable() {
   sx1272.receivePacket(0, &receptionData, &len, &snr, &rssi);
   return (len != 0);
 }
-

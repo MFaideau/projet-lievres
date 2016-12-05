@@ -10,19 +10,19 @@
 
 
 /*---------------------------------------------------------------------------------
- Set up MCP7940 device address
+  Set up MCP7940 device address
 		deviceAddr : fixed device address, must be 0x6f
----------------------------------------------------------------------------------*/
+  ---------------------------------------------------------------------------------*/
 MCP7940::MCP7940(uint8_t devAdd) {
   Wire.begin(); 						// join i2c bus as master device
-  _deviceAddr = devAdd;						
+  _deviceAddr = devAdd;
 }
 
 /*---------------------------------------------------------------------------------
- Write data to the MCP7940 registers (byte write)
+  Write data to the MCP7940 registers (byte write)
 		reg : any register
 		val : data value
----------------------------------------------------------------------------------*/
+  ---------------------------------------------------------------------------------*/
 void MCP7940::byteWrite(uint8_t reg, uint8_t val) {
   Wire.beginTransmission(_deviceAddr);			// begin transmission
   Wire.write(reg);							// select register
@@ -32,24 +32,24 @@ void MCP7940::byteWrite(uint8_t reg, uint8_t val) {
 }
 
 /*---------------------------------------------------------------------------------
- Read data from any MCP7940 register (random read)
-		reg : any register 
+  Read data from any MCP7940 register (random read)
+		reg : any register
 		return : data value
----------------------------------------------------------------------------------*/
+  ---------------------------------------------------------------------------------*/
 uint8_t MCP7940::byteRead(uint8_t reg) {
 
-  Wire.beginTransmission(_deviceAddr);			// begin transmission 
+  Wire.beginTransmission(_deviceAddr);			// begin transmission
   Wire.write(reg);							// select register
   Wire.endTransmission(false);				// send all bytes, restart issued
 
   Wire.requestFrom(_deviceAddr, (uint8_t)1);   	// request 1 byte from slave device #_deviceAddr, stop issued
 
   if (Wire.available())   	 					// slave may send less than requested
-  { 
+  {
     return Wire.read(); 						// get 1 byte
-  } 
+  }
   else {
-	return 0;
+    return 0;
   }
 }
 
@@ -72,8 +72,8 @@ unsigned int MCP7940::bcd2int(int vale)
 void MCP7940::set_alm0(uint8_t match, uint8_t sec, uint8_t minu, uint8_t hr, uint8_t jSem, uint8_t d, uint8_t mth)
 // match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
 {
-  byteWrite(CONTROL, 1+2+16/*B0010011*/);
-  
+  byteWrite(CONTROL, 1 + 2 + 16/*B0010011*/);
+
   byteWrite(ALM0SEC, int2bcd(sec));
   byteWrite(ALM0MIN, int2bcd(minu));
   byteWrite(ALM0HOUR, int2bcd(hr));
@@ -85,8 +85,8 @@ void MCP7940::set_alm0(uint8_t match, uint8_t sec, uint8_t minu, uint8_t hr, uin
 void MCP7940::set_alm1(uint8_t match, uint8_t sec, uint8_t minu, uint8_t hr, uint8_t jSem, uint8_t d, uint8_t mth)
 // match: 0 -> seconds match // 1 -> minutes match // 2 -> hours match // 3 -> day of week match // 4 -> date match // 5, 6 unused // 7 -> Seconds, Minutes, Hour, Day of Week, Date and Month
 {
-  byteWrite(CONTROL, 1+2+16/*B0010011*/);
-  
+  byteWrite(CONTROL, 1 + 2 + 16/*B0010011*/);
+
   byteWrite(ALM1SEC, int2bcd(sec));
   byteWrite(ALM1MIN, int2bcd(minu));
   byteWrite(ALM1HOUR, int2bcd(hr));

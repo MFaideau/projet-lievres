@@ -18,7 +18,6 @@ void setupLoRa()
   digitalWrite(pinRESET, LOW);
   //digitalWrite(pinRX, HIGH);
   //digitalWrite(pinTX, LOW);
-  Serial.begin(9600);
   sx1272.ON();
   sx1272.setMode(10);
   sx1272.setChannel(CH_17_868);
